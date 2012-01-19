@@ -5,16 +5,30 @@
      ,@body))
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
+  ;; count of the threads in the thread pool.
   (defvar *workers-count* 3)
+  ;; listening connection.
   (defvar *http-connection* nil)
+  ;; global event base for IO multiplex.
   (defvar *http-event-base* nil)
+  ;; queue for read task.
   (defvar *task-read-queue* (make-array 0 :fill-pointer 0 :adjustable t))
+  ;; queue for write task.
   (defvar *task-write-queue* (make-array 0 :fill-pointer 0 :adjustable t))
+  ;; lock for visiting the read task queue.
   (defvar *task-read-lock* (make-lock))
+  ;; lock for visiting the write task queue.
   (defvar *task-write-lock* (make-lock))
+  ;; lock for initialization of the thread pool.
   (defvar *startup-lock* (make-lock))
+  ;; lock for the event base.
   (defvar *event-base-lock* (make-lock))
+  ;; lock for the standard output, used in debug-info.
   (defvar *standard-output-lock* (make-lock))
+  ;; virtual machines defined in the configuration file.
+  (defvar *machines* (make-array 0 :element-type 'machine
+                                 :fill-pointer 0 :adjustable t))
+  ;; thread pool.
   (defvar *thread-pool* (make-array *workers-count*
                                     :element-type 'worker-thread)))
 
